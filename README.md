@@ -113,7 +113,13 @@ Command line:
 
     MyService.exe install -config "standard"
 
-**NOTE:** As with Topshelf command arguments, we can use a parameter multiple times.
+As with Topshelf command arguments, we can use a parameter multiple times.
 
     MyService.exe install -config "standard" -config "custom"
+    
+and ofcourse we can use them in instances
+
+    MyService.exe install -instance "i00" -config "standard0" -config "custom0"
+    
+    MyService.exe install -instance "i01" -config "standard1" -config "custom1"
     
