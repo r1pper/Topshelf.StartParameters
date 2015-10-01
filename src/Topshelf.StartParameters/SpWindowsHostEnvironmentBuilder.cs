@@ -2,7 +2,7 @@
 using Topshelf.HostConfigurators;
 using Topshelf.Runtime;
 
-namespace TopShelf.StartParameters
+namespace Topshelf.StartParameters
 {
     public class SpWindowsHostEnvironmentBuilder :
         EnvironmentBuilder

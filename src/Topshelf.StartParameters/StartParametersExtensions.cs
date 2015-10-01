@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Topshelf.HostConfigurators;
 
-namespace TopShelf.StartParameters
+namespace Topshelf.StartParameters
 {
     public static class StartParametersExtensions
     {

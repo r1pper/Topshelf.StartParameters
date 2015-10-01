@@ -5,7 +5,7 @@ using Topshelf.HostConfigurators;
 using Topshelf.Runtime;
 using Topshelf.Runtime.Windows;
 
-namespace TopShelf.StartParameters
+namespace Topshelf.StartParameters
 {
     public class SpWindowsHostEnvironment :
         HostEnvironment
