@@ -69,7 +69,26 @@ HostFactory.Run(x =>
 
 **Note:** The command line defined for a constant parameter should not be used during installation, it will be added to the service parameters will be called automatically during service startup.
 
-Sample
+###WithCustomStartParameter(string argName,string paramName, string value, Action<string> action)###
+
+Similar to  `WithStartParameter` but with complete control over configuration and runtime naming.
+`argName` specifies configuration name for the parameter which can be used during installation process.
+`paramName` specifies runtime name for the parameter which can be used with start command, and will be automatically passed to the service during startup.
+
+*Usage:*
+
+####WithStartParameter(string name, string value, Action<string> action)####
+*Usage:*
+
+```c#
+HostFactory.Run(x =>
+            {
+                x.WithCustomStartParameter("setmyparam", "myparam",
+                    a => HostLogger.Get("StartParameters").InfoFormat("custom parameter: {0}, value: {1}", "myparam", a));
+            });
+```
+
+Code Sample
 ---------------
 
 Let's dive in the code!
@@ -92,6 +111,9 @@ HostFactory.Run(x =>
                 x.WithStartParameter("test", "hello world from start parameter!",
                     a => HostLogger.Get("StartParameters").InfoFormat("constant parameter: {0}, value: {1}", "test", a));
 
+                x.WithCustomStartParameter("setmyparam", "myparam",
+                    a => HostLogger.Get("StartParameters").InfoFormat("custom parameter: {0}, value: {1}", "myparam", a));
+                    
                 x.SetServiceName("MyService");
                 x.SetDisplayName("My Service");
                 x.SetDescription("Sample Service");
@@ -109,17 +131,20 @@ HostFactory.Run(x =>
 
 ```
 
-Command line:
+Command Samples
+---------------
 
-    MyService.exe install -config "standard"
+An installation command based on the sample code:
+
+    MyService.exe install -config "standard" -setmyparam "customparam"
 
 As with Topshelf command arguments, we can use a parameter multiple times.
 
-    MyService.exe install -config "standard" -config "custom"
+    MyService.exe install -config "standard" -config "custom" -setmyparam "customparam1" -setmyparam "customparam2"
     
 and ofcourse we can use them in instances
 
     MyService.exe install -instance "i00" -config "standard0" -config "custom0"
     
-    MyService.exe install -instance "i01" -config "standard1" -config "custom1"
+    MyService.exe install -instance "i01" -config "standard1" -config "custom1" -setmyparam "customparam2"
     

@@ -26,6 +26,15 @@ namespace Topshelf.StartParameters
             return configurator;
         }
 
+        public static HostConfigurator WithCustomStartParameter(this HostConfigurator configurator, string argName,string paramName,
+    Action<string> action)
+        {
+            configurator.AddCommandLineDefinition(paramName, action);
+            configurator.AddCommandLineDefinition(argName, s => Add(configurator, paramName, s));
+
+            return configurator;
+        }
+
         public static HostConfigurator WithStartParameter(this HostConfigurator configurator, string name,string value,
     Action<string> action)
         {
