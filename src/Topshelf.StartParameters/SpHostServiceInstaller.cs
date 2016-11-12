@@ -21,7 +21,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
-using Topshelf;
 using Topshelf.HostConfigurators;
 using Topshelf.Logging;
 using Topshelf.Runtime;
@@ -100,7 +99,7 @@ namespace Topshelf.StartParameters
             var installers = new Installer[]
                 {
                     ConfigureServiceInstaller(settings, settings.Dependencies, settings.StartMode),
-                    ConfigureServiceProcessInstaller(settings.Account, settings.Username, settings.Password)
+                    ConfigureServiceProcessInstaller(settings.Credentials.Account, settings.Credentials.Username, settings.Credentials.Password)
                 };
 
             //DO not auto create EventLog Source while install service
@@ -134,13 +133,13 @@ namespace Topshelf.StartParameters
             string arguments = " ";
 
             if (!string.IsNullOrEmpty(settings.InstanceName))
-                arguments += string.Format(" -instance \"{0}\"", settings.InstanceName);
+                arguments += $" -instance \"{settings.InstanceName}\"";
 
             if (!string.IsNullOrEmpty(settings.DisplayName))
-                arguments += string.Format(" -displayname \"{0}\"", settings.DisplayName);
+                arguments += $" -displayname \"{settings.DisplayName}\"";
 
             if (!string.IsNullOrEmpty(settings.Name))
-                arguments += string.Format(" -servicename \"{0}\"", settings.Name);
+                arguments += $" -servicename \"{settings.Name}\"";
 
             var pairs = StartParametersExtensions.Commands(_hostConfigurator);
             if (pairs != null)
@@ -151,7 +150,7 @@ namespace Topshelf.StartParameters
                             ? settings.ServiceName
                             : settings.ServiceName + "$" + settings.InstanceName);
 
-                    arguments += string.Format(" -{0} \"{1}\"", pair.Item1, pair.Item2);
+                    arguments += $" -{pair.Item1} \"{pair.Item2}\"";
                 }
 
             return new HostInstaller(settings, arguments, installers);
@@ -168,7 +167,7 @@ namespace Topshelf.StartParameters
             if (assembly == null)
                 throw new TopshelfException("Assembly.GetEntryAssembly() is null for some reason.");
 
-            string path = string.Format("/assemblypath={0}", assembly.Location);
+            string path = $"/assemblypath={assembly.Location}";
             string[] commandLine = { path };
 
             var context = new InstallContext(null, commandLine);
