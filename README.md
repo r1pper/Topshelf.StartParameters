@@ -31,13 +31,13 @@ The following code is equivalent to calling `EnableStartParameters`:
 ```c#
 HostFactory.Run(x =>
             {
-                x.EnableStartParameters();
+                x.UseEnvironmentBuilder(e => new SpWindowsHostEnvironmentBuilder(e));
             });
 ```
   
 ###WithStartParameter###
 
-The method which we can be used to set a start parameter for the service. it comes in two flavors `WithStartParameter(string name, Action<string> action)` and `WithStartParameter(string name, string value)`, the former can be used to set start parameter value during service installation an the latter can be used to set a constant value as a start parameter.
+The method can be used to set a start parameter for the service. it comes in three flavors `WithStartParameter(string name, Action<string> action)`, `WithStartParameter(string name, Action<string> installAction , Action<string> runtimeAction)` and `WithStartParameter(string name, string value)`, the first two can be used to set start parameter value during service installation and the latter can be used to set a constant value as a start parameter.
 
 ####WithStartParameter(string name, Action<string> action)####
 *Usage:*
@@ -68,6 +68,17 @@ HostFactory.Run(x =>
 **Note:** Never define a Command line definition with the same name as a parameter (or parameter name with **`tssp`** prefix), the extension will use the parameter name as a Command line definition under the hood.
 
 **Note:** The command line defined for a constant parameter should not be used during installation, it will be added to the service parameters will be called automatically during service startup.
+
+####WithStartParameter(string name, string value, Action<string> installAction, Action<string> runtimeAction)####
+*Usage:*
+
+```c#
+HostFactory.Run(x =>
+            {
+                x.WithStartParameter("test", "hello world from start parameter!",
+                    a => HostLogger.Get("StartParameters").InfoFormat("constant parameter: {0}, value: {1}", "test", a));
+            });
+```
 
 ###WithCustomStartParameter(string argName,string paramName, string value, Action<string> action)###
 
@@ -147,4 +158,3 @@ and ofcourse we can use them in instances
     MyService.exe install -instance "i00" -config "standard0" -config "custom0"
     
     MyService.exe install -instance "i01" -config "standard1" -config "custom1" -setmyparam "customparam2"
-    

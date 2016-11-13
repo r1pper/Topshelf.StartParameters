@@ -26,11 +26,11 @@ namespace Topshelf.StartParameters
             return configurator;
         }
 
-        public static HostConfigurator WithCustomStartParameter(this HostConfigurator configurator, string argName,string paramName,
+        public static HostConfigurator WithCustomStartParameter(this HostConfigurator configurator, string installName,string runtimeName,
     Action<string> action)
         {
-            configurator.AddCommandLineDefinition(paramName, action);
-            configurator.AddCommandLineDefinition(argName, s => Add(configurator, paramName, s));
+            configurator.AddCommandLineDefinition(runtimeName, action);
+            configurator.AddCommandLineDefinition(installName, s => Add(configurator, runtimeName, s));
 
             return configurator;
         }
@@ -40,6 +40,24 @@ namespace Topshelf.StartParameters
         {
             Add(configurator,name,value);
             configurator.AddCommandLineDefinition(name, action);
+
+            return configurator;
+        }
+
+        public static HostConfigurator WithStartParameter(this HostConfigurator configurator, string name, Func<string, string> installAction,
+    Action<string> runtimeAction)
+        {
+            configurator.AddCommandLineDefinition(Prefix + name, runtimeAction);
+            configurator.AddCommandLineDefinition(name, s => Add(configurator, Prefix + name, installAction(s)));
+
+            return configurator;
+        }
+
+        public static HostConfigurator WithCustomStartParameter(this HostConfigurator configurator, string installName, string runtimeName,
+    Func<string, string> installAction, Action<string> runtimeAction)
+        {
+            configurator.AddCommandLineDefinition(runtimeName, runtimeAction);
+            configurator.AddCommandLineDefinition(installName, s => Add(configurator, runtimeName, installAction(s)));
 
             return configurator;
         }

@@ -21,7 +21,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.ServiceProcess;
-using Topshelf;
 using Topshelf.HostConfigurators;
 using Topshelf.Logging;
 using Topshelf.Runtime;
@@ -146,10 +145,7 @@ namespace Topshelf.StartParameters
             if (pairs != null)
                 foreach (var pair in pairs)
                 {
-                    _log.DebugFormat("Start parameter '{0}' with value '{1}' added to {2}", pair.Item1, pair.Item2,
-                        string.IsNullOrEmpty(settings.InstanceName)
-                            ? settings.ServiceName
-                            : settings.ServiceName + "$" + settings.InstanceName);
+                    _log.DebugFormat("Start parameter '{0}' with value '{1}' added to {2}", pair.Item1, pair.Item2,settings.ServiceName);
 
                     arguments += string.Format(" -{0} \"{1}\"", pair.Item1, pair.Item2);
                 }
