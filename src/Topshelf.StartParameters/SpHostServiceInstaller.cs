@@ -36,6 +36,14 @@ namespace Topshelf.StartParameters
         private readonly HostConfigurator _hostConfigurator;
         private readonly LogWriter _log = HostLogger.Get<SpHostServiceInstaller>();
 
+        public ServiceProcessInstaller ServiceProcessInstaller
+        {
+            get
+            {
+                return (ServiceProcessInstaller)_installer.Installers[1];
+            }
+        }
+
         public SpHostServiceInstaller(InstallHostSettings settings, HostConfigurator configurator)
         {
             _hostConfigurator = configurator;
