@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Topshelf.StartParameters</RootNamespace>
-    <AssemblyName>Topshelf.StartParameters</AssemblyName>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Deterministic>true</Deterministic>
+    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
+    <DebugType>portable</DebugType>
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Topshelf" Version="4.2.0" />
