@@ -6,8 +6,6 @@ namespace Topshelf.StartParameters
 {
     public static class StartParametersExtensions
     {
-        private const string Prefix = "tssp";
-
         private static readonly Dictionary<HostConfigurator, List<Tuple<string, string>>> ActionTable =
             new Dictionary<HostConfigurator, List<Tuple<string, string>>>();
 
@@ -18,28 +16,28 @@ namespace Topshelf.StartParameters
         }
 
         public static HostConfigurator WithStartParameter(this HostConfigurator configurator, string name,
-            Action<string> action)
+                                                          Action<string> action)
         {
-            configurator.AddCommandLineDefinition(Prefix + name, action);
-            configurator.AddCommandLineDefinition(name, s => Add(configurator, Prefix + name, s));
+            configurator.AddCommandLineDefinition(name, action);
+            configurator.AddCommandLineDefinition(name, s => Add(configurator, name, s));
 
             return configurator;
         }
 
-        public static HostConfigurator WithCustomStartParameter(this HostConfigurator configurator, string argName,string paramName,
-    Action<string> action)
+        public static HostConfigurator WithStartParameter(this HostConfigurator configurator, string name, string value,
+                                                          Action<string> action)
+        {
+            Add(configurator, name, value);
+            configurator.AddCommandLineDefinition(name, action);
+
+            return configurator;
+        }
+
+        public static HostConfigurator WithCustomStartParameter(this HostConfigurator configurator, string argName,
+                                                                string paramName, Action<string> action)
         {
             configurator.AddCommandLineDefinition(paramName, action);
             configurator.AddCommandLineDefinition(argName, s => Add(configurator, paramName, s));
-
-            return configurator;
-        }
-
-        public static HostConfigurator WithStartParameter(this HostConfigurator configurator, string name,string value,
-    Action<string> action)
-        {
-            Add(configurator,name,value);
-            configurator.AddCommandLineDefinition(name, action);
 
             return configurator;
         }
@@ -62,6 +60,6 @@ namespace Topshelf.StartParameters
             ActionTable.TryGetValue(configurator, out pairs);
 
             return pairs;
-        } 
+        }
     }
 }
