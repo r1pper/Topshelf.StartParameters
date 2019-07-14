@@ -12,7 +12,7 @@ The only dependency is Topshelf *(the extension is written based on Version 4.2.
 Reference
 ------------
 
-###EnableStartParameters###
+### EnableStartParameters
 
 An extension method that should be called to activate StartParameters.
 
@@ -35,11 +35,7 @@ HostFactory.Run(x =>
             });
 ```
   
-###WithStartParameter###
-
-The method which we can be used to set a start parameter for the service. it comes in two flavors `WithStartParameter(string name, Action<string> action)` and `WithStartParameter(string name, string value)`, the former can be used to set a start parameter value during service installation and the latter can be used to set a constant value as a start parameter.
-
-####WithStartParameter(string name, Action<string> action)####
+#### WithStartParameter(string name, Action<string> action)
 *Usage:*
 
 ```c#
@@ -52,13 +48,25 @@ HostFactory.Run(x =>
 
 Under the hood it will create command line definitions **`config`** and **`tsspconfig`**, the former would be used during the installation, and the latter would be passed automatically to the service during startup.
 
-####WithStartParameter(string name, string value, Action<string> action)####
+#### WithConstantStartParameter(string installName, string runtimeName, Action<string> action)
 *Usage:*
 
 ```c#
 HostFactory.Run(x =>
             {
-                x.WithStartParameter("test", "hello world from start parameter!",
+                x.WithConstantStartParameter("settest", "test",
+                    a => HostLogger.Get("StartParameters").InfoFormat("test parameter with settest for installing, installed value: {0}" a));
+            });
+```
+Similar to the previous method but with control over Install and Run parameter name.
+
+#### WithConstantStartParameter(string name, string constantValue, Action<string> action)
+*Usage:*
+
+```c#
+HostFactory.Run(x =>
+            {
+                x.WithConstantStartParameter("test", "hello world from start parameter!",
                     a => HostLogger.Get("StartParameters").InfoFormat("constant parameter: {0}, value: {1}", "test", a));
             });
 ```
@@ -69,22 +77,20 @@ HostFactory.Run(x =>
 
 **Note:** The command line defined for a constant parameter should not be used during installation, it will be added to the service parameters to be called automatically during service startup.
 
-###WithCustomStartParameter(string argName,string paramName, string value, Action<string> action)###
+### public static HostConfigurator WithStartParameter(this HostConfigurator configurator, string installName, string runtimeName,Func<string, string> installAction, Action<string> runtimeAction)
 
-Similar to `WithStartParameter` but with complete control over configuration and runtime naming.
-`argName` specifies configuration name for the parameter which can be used during installation process.
-`paramName` specifies runtime name for the parameter which can be used with the start command, and will be automatically passed to the service during startup.
+Similar to previous methods but with complete control over configuration and runtime naming.
+`installName` specifies configuration name for the parameter which can be used during installation process.
+`runtimeName` specifies runtime name for the parameter which can be used with the start command, and will be automatically passed to the service during startup.
 
-*Usage:*
-
-####WithStartParameter(string name, string value, Action<string> action)####
 *Usage:*
 
 ```c#
 HostFactory.Run(x =>
             {
-                x.WithCustomStartParameter("setmyparam", "myparam",
-                    a => HostLogger.Get("StartParameters").InfoFormat("custom parameter: {0}, value: {1}", "myparam", a));
+                x.WithStartParameter("setmyparam", "myparam",
+                a => HostLogger.Get("StartParameters").InfoFormat("install parameter: {0}, value: {1}", "myparam", a)
+                    a => HostLogger.Get("StartParameters").InfoFormat("runtime parameter (retrieved form install): {0}, value: {1}", "myparam", a));
             });
 ```
 
@@ -94,41 +100,40 @@ Code Sample
 Let's dive into the code!
 
 ```c#
-HostFactory.Run(x =>
-            {
-                x.EnableStartParameters();
-                x.UseNLog();
-                x.Service<MyService>(sc =>
-                {
-                    sc.ConstructUsing(hs => new MyService(hs));
-                    sc.WhenStarted((s, h) => s.Start(h));
-                    sc.WhenStopped((s, h) => s.Stop(h));
-                });
-
-                x.WithStartParameter("config",
-                    a => HostLogger.Get("StartParameters").InfoFormat("parameter: {0}, value: {1}", "config", a));
-
-                x.WithStartParameter("test", "hello world from start parameter!",
-                    a => HostLogger.Get("StartParameters").InfoFormat("constant parameter: {0}, value: {1}", "test", a));
-
-                x.WithCustomStartParameter("setmyparam", "myparam",
-                    a => HostLogger.Get("StartParameters").InfoFormat("custom parameter: {0}, value: {1}", "myparam", a));
-                    
-                x.SetServiceName("MyService");
-                x.SetDisplayName("My Service");
-                x.SetDescription("Sample Service");
-                x.StartAutomatically();
-                x.RunAsLocalSystem();
-                x.EnableServiceRecovery(r =>
-                {
-                    r.OnCrashOnly();
-                    r.RestartService(1); //first
-                    r.RestartService(1); //second
-                    r.RestartService(1); //subsequents
-                    r.SetResetPeriod(0);
-                });
-            });
-
+ HostFactory.Run(x =>
+{
+    x.EnableStartParameters();
+    x.Service<MyService>(sc =>
+    {
+        sc.ConstructUsing(hs => new MyService(_path)
+        {
+            ActionSample = _action,
+            AutoSample = _auto,
+            ManualSample = _manual,
+            ConstantSample = _constant
+        });
+        sc.WhenStarted((s, h) => s.Start(h));
+        sc.WhenStopped((s, h) => s.Stop(h));
+    });
+    x.WithStartParameter("setpath", "path", n => _path = n);
+    x.WithStartParameter("setaction", "action", (n) => n.ToUpperInvariant(), n => _action = n);
+    x.WithStartParameter("setmanual", "manual", n => _manual = n);
+    x.WithStartParameter("auto", n => _auto = n);
+    x.WithConstantStartParameter("constant","hello", n => _constant = n);
+    x.SetServiceName("MyService");
+    x.SetDisplayName("My Service");
+    x.SetDescription("TopShelf Start Paramter Sample Service");
+    x.StartAutomatically();
+    x.RunAsLocalSystem();
+    x.EnableServiceRecovery(r =>
+    {
+        r.OnCrashOnly();
+        r.RestartService(1); //first
+        r.RestartService(1); //second
+        r.RestartService(1); //subsequents
+        r.SetResetPeriod(0);
+    });
+});
 ```
 
 Command Samples
@@ -147,4 +152,3 @@ and of course we can use them in instances
     MyService.exe install -instance "i00" -config "standard0" -config "custom0"
     
     MyService.exe install -instance "i01" -config "standard1" -config "custom1" -setmyparam "customparam2"
-    
