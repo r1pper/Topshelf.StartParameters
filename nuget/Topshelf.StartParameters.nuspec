@@ -2,18 +2,18 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>TopShelf.StartParameters</id>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
         <title>TopShelf.StartParameters</title>
         <authors>r1pper,Markeli</authors>
         <owners>r1pper</owners>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Topshelf.StartParameters is a small extension based on amazing Topshelf project, with the sole purpose of adding Customizable Start Parameter to Topshelf based services.
+        <description>Topshelf.StartParameters is a small extension based on the amazing Topshelf project, with the sole purpose of adding Customizable Start Parameter to Topshelf based services.
 
 NOTE: this extension only works for windows based services.</description>
         <language>en-GB</language>
         <tags>topshelf</tags>
         <dependencies>
-            <dependency id="Topshelf" version="4.0.3" />
+            <dependency id="Topshelf" version="4.2.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework="" />
