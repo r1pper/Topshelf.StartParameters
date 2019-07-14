@@ -4,7 +4,14 @@
     <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
     <DebugType>portable</DebugType>
     <LangVersion>7.2</LangVersion>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
+    <Authors>r1pper, Markeli, vesuvian</Authors>
+    <Description>Topshelf.StartParameters is a small extension based on the amazing Topshelf project, with the sole purpose of adding Customizable Start Parameter to Topshelf based services.
+
+NOTE: this extension only works for windows based services.</Description>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/r1pper/Topshelf.StartParameters</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/r1pper/Topshelf.StartParameters</RepositoryUrl>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>

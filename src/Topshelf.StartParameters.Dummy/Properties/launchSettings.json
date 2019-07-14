@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Topshelf.StartParameters.Dummy": {
+      "commandName": "Project"
+    }
+  }
+}
