@@ -152,3 +152,11 @@ and of course we can use them in instances
     MyService.exe install -instance "i00" -config "standard0" -config "custom0"
     
     MyService.exe install -instance "i01" -config "standard1" -config "custom1" -setmyparam "customparam2"
+    
+Contributors
+---------------
+Special thanks to:
+
+[Chris Cameron](https://github.com/vesuvian)
+
+[Maxim Markelow](https://github.com/Markeli)
